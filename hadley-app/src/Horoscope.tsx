@@ -14,8 +14,7 @@ function Horoscope() {
     const [sun, setSun] = React.useState("")
     const [moon, setMoon] = React.useState("")
     const [rising, setRising] = React.useState("")
-    const horoscopes: string[] = []
-    const [horoscope, setHoroscope] = React.useState(horoscopes)
+    const [horoscope, setHoroscope] = React.useState([])
 
     const requestHoroscope = () => {
         const toSend = {
@@ -29,12 +28,13 @@ function Horoscope() {
                 'Access-Control-Allow-Origin': '*',
             }
         }
-        axios.post('/horoscope', toSend, config)
-            .then((response: { data: { horoscope: React.SetStateAction<string[]>; }; }) => {
+        axios.post('http://localhost:4567/horoscope', toSend, config)
+            //@ts-ignore
+            .then(response => {
                 console.log(response.data);
                 //TODO: Go to the Main.java in the server from the stencil, and find what field name you should put here.
                 //Note: It is very important that you understand how this is set up and why it works!
-                setHoroscope(response.data.horoscope);
+                setHoroscope(response.data['horoscope']);
             })
             .catch((error: any) => {
                 console.log(error);
@@ -52,7 +52,8 @@ function Horoscope() {
                 onPress={()=> {
                     requestHoroscope()
                 }}>Submit</AwesomeButton>
-            <div className="horoscope-result-style">{horoscope}</div>
+            <div className="horoscope-result-style">{horoscope.map((horoscope, index) => <p key={index}>{horoscope}</p>)}</div>
+
         </div>
     );
 }
